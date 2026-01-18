@@ -1,44 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { NextResponse } from "next/server"
+import { updateTask, deleteTask, getTaskById } from "@/lib/tasks"
 
-const TASKS_FILE = path.join(process.cwd(), '.tasks', 'tasks.json');
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const task = getTaskById(id)
 
-function readTasks() {
-  if (!fs.existsSync(TASKS_FILE)) return [];
-  const data = fs.readFileSync(TASKS_FILE, 'utf-8');
-  return JSON.parse(data);
-}
+  if (!task) {
+    return NextResponse.json({ error: "Task not found" }, { status: 404 })
+  }
 
-function writeTasks(tasks: any[]) {
-  fs.writeFileSync(TASKS_FILE, JSON.stringify(tasks, null, 2));
+  return NextResponse.json(task)
 }
 
 export async function PATCH(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const { status } = await request.json();
-  const tasks = readTasks();
-  const taskIndex = tasks.findIndex((t: any) => t.id === id);
-  
-  if (taskIndex !== -1) {
-    tasks[taskIndex].status = status;
-    writeTasks(tasks);
-    return NextResponse.json({ task: tasks[taskIndex] });
+  try {
+    const { id } = await params
+    const body = await request.json()
+    const { status, title } = body
+
+    const validStatuses = ["pending", "in-progress", "completed"]
+    if (status && !validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: "Invalid status. Must be: pending, in-progress, or completed" },
+        { status: 400 }
+      )
+    }
+
+    const updates: { status?: string; title?: string } = {}
+    if (status) updates.status = status
+    if (title) updates.title = title.trim()
+
+    const task = updateTask(id, updates)
+
+    if (!task) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 })
+    }
+
+    return NextResponse.json(task)
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid request body" },
+      { status: 400 }
+    )
   }
-  
-  return NextResponse.json({ error: 'Task not found' }, { status: 404 });
 }
 
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const tasks = readTasks();
-  const filtered = tasks.filter((t: any) => t.id !== id);
-  writeTasks(filtered);
-  return NextResponse.json({ success: true });
+  const { id } = await params
+  const deleted = deleteTask(id)
+
+  if (!deleted) {
+    return NextResponse.json({ error: "Task not found" }, { status: 404 })
+  }
+
+  return NextResponse.json({ success: true })
 }

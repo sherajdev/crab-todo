@@ -1,34 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const TASKS_FILE = path.join(process.cwd(), '.tasks', 'tasks.json');
-
-function readTasks() {
-  if (!fs.existsSync(TASKS_FILE)) return [];
-  const data = fs.readFileSync(TASKS_FILE, 'utf-8');
-  return JSON.parse(data);
-}
-
-function writeTasks(tasks: any[]) {
-  fs.writeFileSync(TASKS_FILE, JSON.stringify(tasks, null, 2));
-}
+import { NextResponse } from "next/server"
+import { getAllTasks, createTask } from "@/lib/tasks"
 
 export async function GET() {
-  const tasks = readTasks();
-  return NextResponse.json({ tasks });
+  const tasks = getAllTasks()
+  return NextResponse.json({ tasks })
 }
 
-export async function POST(request: NextRequest) {
-  const { title } = await request.json();
-  const tasks = readTasks();
-  const newTask = {
-    id: Date.now().toString(),
-    title,
-    status: 'pending',
-    created_at: new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })
-  };
-  tasks.push(newTask);
-  writeTasks(tasks);
-  return NextResponse.json({ task: newTask });
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { title } = body
+
+    if (!title || typeof title !== "string" || title.trim() === "") {
+      return NextResponse.json(
+        { error: "Title is required" },
+        { status: 400 }
+      )
+    }
+
+    const task = createTask(title.trim())
+    return NextResponse.json(task, { status: 201 })
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid request body" },
+      { status: 400 }
+    )
+  }
 }
