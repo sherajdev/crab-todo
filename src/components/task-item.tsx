@@ -5,8 +5,8 @@ import type { Task } from "@/lib/tasks"
 
 interface TaskItemProps {
   task: Task
-  onUpdate: (id: string, updates: { status?: string; title?: string }) => Promise<void>
-  onDelete: (id: string) => Promise<void>
+  onUpdate?: (id: string, updates: { status?: string; title?: string }) => Promise<void>
+  onDelete?: (id: string) => Promise<void>
 }
 
 const statusColors: Record<string, { bg: string; text: string; border: string }> = {
@@ -21,12 +21,14 @@ export function TaskItem({ task, onUpdate, onDelete }: TaskItemProps) {
   const colors = statusColors[task.status]
 
   const handleStatusChange = async (newStatus: Task["status"]) => {
+    if (!onUpdate) return
     setIsLoading(true)
     await onUpdate(task.id, { status: newStatus })
     setIsLoading(false)
   }
 
   const handleDelete = async () => {
+    if (!onDelete) return
     setIsLoading(true)
     await onDelete(task.id)
   }
@@ -43,6 +45,8 @@ export function TaskItem({ task, onUpdate, onDelete }: TaskItemProps) {
       hour12: false,
     }).replace(",", "")
   }
+
+  const showActions = onUpdate || onDelete
 
   return (
     <div
@@ -61,33 +65,37 @@ export function TaskItem({ task, onUpdate, onDelete }: TaskItemProps) {
         >
           {task.status}
         </span>
-        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          {task.status !== "in-progress" && (
-            <button
-              onClick={() => handleStatusChange("in-progress")}
-              className="bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 px-3 py-1 rounded text-sm transition-colors"
-              title="Mark as In Progress"
-            >
-              ▶️
-            </button>
-          )}
-          {task.status !== "completed" && (
-            <button
-              onClick={() => handleStatusChange("completed")}
-              className="bg-green-500/20 hover:bg-green-500/40 text-green-400 px-3 py-1 rounded text-sm transition-colors"
-              title="Mark as Completed"
-            >
-              ✅
-            </button>
-          )}
-          <button
-            onClick={handleDelete}
-            className="bg-red-500/20 hover:bg-red-500/40 text-red-400 px-3 py-1 rounded text-sm transition-colors"
-            title="Delete Task"
-          >
-            🗑️
-          </button>
-        </div>
+        {showActions && (
+          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            {task.status !== "in-progress" && onUpdate && (
+              <button
+                onClick={() => handleStatusChange("in-progress")}
+                className="bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 px-3 py-1 rounded text-sm transition-colors"
+                title="Mark as In Progress"
+              >
+                ▶️
+              </button>
+            )}
+            {task.status !== "completed" && onUpdate && (
+              <button
+                onClick={() => handleStatusChange("completed")}
+                className="bg-green-500/20 hover:bg-green-500/40 text-green-400 px-3 py-1 rounded text-sm transition-colors"
+                title="Mark as Completed"
+              >
+                ✅
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={handleDelete}
+                className="bg-red-500/20 hover:bg-red-500/40 text-red-400 px-3 py-1 rounded text-sm transition-colors"
+                title="Delete Task"
+              >
+                🗑️
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

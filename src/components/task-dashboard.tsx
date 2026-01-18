@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import useSWR from "swr"
 import { RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { AddTaskForm } from "@/components/add-task-form"
 import { TaskList } from "@/components/task-list"
 import { StatsCards } from "@/components/stats-cards"
 import type { Task } from "@/lib/tasks"
@@ -33,46 +32,6 @@ export function TaskDashboard() {
       setLastRefresh(new Date())
     }
   }, [data])
-
-  const handleAddTask = useCallback(
-    async (title: string) => {
-      const res = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-      })
-      if (res.ok) {
-        mutate()
-      }
-    },
-    [mutate]
-  )
-
-  const handleUpdateTask = useCallback(
-    async (id: string, updates: { status?: string; title?: string }) => {
-      const res = await fetch(`/api/tasks/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-      })
-      if (res.ok) {
-        mutate()
-      }
-    },
-    [mutate]
-  )
-
-  const handleDeleteTask = useCallback(
-    async (id: string) => {
-      const res = await fetch(`/api/tasks/${id}`, {
-        method: "DELETE",
-      })
-      if (res.ok) {
-        mutate()
-      }
-    },
-    [mutate]
-  )
 
   const filters: { value: FilterType; label: string }[] = [
     { value: "all", label: "All" },
@@ -129,11 +88,6 @@ export function TaskDashboard() {
           </Button>
         </div>
 
-        {/* Add Task Form */}
-        <div className="mb-6">
-          <AddTaskForm onAdd={handleAddTask} />
-        </div>
-
         {/* Filters */}
         <div className="flex gap-2 mb-6 flex-wrap">
           {filters.map((f) => (
@@ -155,8 +109,6 @@ export function TaskDashboard() {
         <TaskList
           tasks={tasks}
           filter={filter}
-          onUpdate={handleUpdateTask}
-          onDelete={handleDeleteTask}
         />
       </div>
 

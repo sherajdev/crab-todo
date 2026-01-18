@@ -6,8 +6,8 @@ import type { Task } from "@/lib/tasks"
 interface TaskListProps {
   tasks: Task[]
   filter: "all" | "pending" | "in-progress" | "completed"
-  onUpdate: (id: string, updates: { status?: string; title?: string }) => Promise<void>
-  onDelete: (id: string) => Promise<void>
+  onUpdate?: (id: string, updates: { status?: string; title?: string }) => Promise<void>
+  onDelete?: (id: string) => Promise<void>
 }
 
 export function TaskList({ tasks, filter, onUpdate, onDelete }: TaskListProps) {

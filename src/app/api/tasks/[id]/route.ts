@@ -32,8 +32,8 @@ export async function PATCH(
       )
     }
 
-    const updates: { status?: string; title?: string } = {}
-    if (status) updates.status = status
+    const updates: { status?: "pending" | "in-progress" | "completed"; title?: string } = {}
+    if (status) updates.status = status as "pending" | "in-progress" | "completed"
     if (title) updates.title = title.trim()
 
     const task = updateTask(id, updates)
