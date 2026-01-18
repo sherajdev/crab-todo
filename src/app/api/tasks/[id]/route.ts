@@ -1,66 +1,99 @@
-import { NextResponse } from "next/server"
-import { updateTask, deleteTask, getTaskById } from "@/lib/tasks"
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
-  const task = getTaskById(id)
-
-  if (!task) {
-    return NextResponse.json({ error: "Task not found" }, { status: 404 })
-  }
-
-  return NextResponse.json(task)
-}
-
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+// PATCH /api/tasks/:id - Update task status or title
+export async function PATCH(request: NextRequest, context: any) {
   try {
-    const { id } = await params
-    const body = await request.json()
-    const { status, title } = body
+    const { id } = await context.params;
+    const { status, title } = await request.json();
 
-    const validStatuses = ["pending", "in-progress", "completed"]
-    if (status && !validStatuses.includes(status)) {
+    if (!id) {
       return NextResponse.json(
-        { error: "Invalid status. Must be: pending, in-progress, or completed" },
+        { error: 'Task ID is required' },
         { status: 400 }
-      )
+      );
     }
 
-    const updates: { status?: "pending" | "in-progress" | "completed"; title?: string } = {}
-    if (status) updates.status = status as "pending" | "in-progress" | "completed"
-    if (title) updates.title = title.trim()
+    // Check if task exists
+    const existing = await context.env.DB.prepare(
+      "SELECT * FROM tasks WHERE id = ?"
+    ).bind(id).first();
 
-    const task = updateTask(id, updates)
-
-    if (!task) {
-      return NextResponse.json({ error: "Task not found" }, { status: 404 })
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Task not found' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(task)
-  } catch {
+    // Update status
+    if (status) {
+      if (!['pending', 'in-progress', 'completed'].includes(status)) {
+        return NextResponse.json(
+          { error: 'Invalid status' },
+          { status: 400 }
+        );
+      }
+      await context.env.DB.prepare(
+        "UPDATE tasks SET status = ?, updated_at = datetime('now') WHERE id = ?"
+      ).bind(status, id).run();
+    }
+
+    // Update title
+    if (title && title.trim() !== '') {
+      await context.env.DB.prepare(
+        "UPDATE tasks SET title = ?, updated_at = datetime('now') WHERE id = ?"
+      ).bind(title.trim(), id).run();
+    }
+
+    // Fetch updated task
+    const updated = await context.env.DB.prepare(
+      "SELECT * FROM tasks WHERE id = ?"
+    ).bind(id).first();
+
+    return NextResponse.json({ task: updated });
+  } catch (error) {
+    console.error('PATCH task error:', error);
     return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 }
-    )
+      { error: 'Failed to update task' },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
-  const deleted = deleteTask(id)
+// DELETE /api/tasks/:id - Delete task
+export async function DELETE(request: NextRequest, context: any) {
+  try {
+    const { id } = await context.params;
 
-  if (!deleted) {
-    return NextResponse.json({ error: "Task not found" }, { status: 404 })
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Task ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Check if task exists
+    const existing = await context.env.DB.prepare(
+      "SELECT * FROM tasks WHERE id = ?"
+    ).bind(id).first();
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Task not found' },
+        { status: 404 }
+      );
+    }
+
+    await context.env.DB.prepare(
+      "DELETE FROM tasks WHERE id = ?"
+    ).bind(id).run();
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('DELETE task error:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete task' },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({ success: true })
 }

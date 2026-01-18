@@ -1,29 +1,65 @@
-import { NextResponse } from "next/server"
-import { getAllTasks, createTask } from "@/lib/tasks"
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
-  const tasks = getAllTasks()
-  return NextResponse.json({ tasks })
+// GET /api/tasks - List all tasks
+export async function GET(request: NextRequest, context: any) {
+  try {
+    const { results } = await context.env.DB.prepare(
+      "SELECT * FROM tasks ORDER BY created_at DESC"
+    ).all();
+
+    return NextResponse.json({
+      tasks: results,
+      count: results.length
+    });
+  } catch (error) {
+    console.error('GET tasks error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch tasks' },
+      { status: 500 }
+    );
+  }
 }
 
-export async function POST(request: Request) {
+// POST /api/tasks - Create new task
+export async function POST(request: NextRequest, context: any) {
   try {
-    const body = await request.json()
-    const { title } = body
+    const { title, status = 'pending' } = await request.json();
 
-    if (!title || typeof title !== "string" || title.trim() === "") {
+    // Validation
+    if (!title || title.trim() === '') {
       return NextResponse.json(
-        { error: "Title is required" },
+        { error: 'Title is required' },
         { status: 400 }
-      )
+      );
     }
 
-    const task = createTask(title.trim())
-    return NextResponse.json(task, { status: 201 })
-  } catch {
+    if (!['pending', 'in-progress', 'completed'].includes(status)) {
+      return NextResponse.json(
+        { error: 'Invalid status. Must be: pending, in-progress, or completed' },
+        { status: 400 }
+      );
+    }
+
+    const id = Date.now().toString();
+
+    await context.env.DB.prepare(
+      "INSERT INTO tasks (id, title, status, created_at, updated_at) VALUES (?, ?, ?, datetime('now'), datetime('now'))"
+    ).bind(id, title.trim(), status).run();
+
+    return NextResponse.json({
+      task: {
+        id,
+        title: title.trim(),
+        status,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    }, { status: 201 });
+  } catch (error) {
+    console.error('POST task error:', error);
     return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 }
-    )
+      { error: 'Failed to create task' },
+      { status: 500 }
+    );
   }
 }

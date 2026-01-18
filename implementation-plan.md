@@ -489,23 +489,23 @@ npx wrangler pages domain crab-todo.sheraj.org --project=crab-todo
 ## 8. Implementation Checklist
 
 ### Phase 1: Database Setup
-- [ ] Create D1 database
-- [ ] Apply schema.sql
-- [ ] Apply seed.sql (optional)
-- [ ] Test queries locally
+- [x] Create D1 database
+- [x] Apply schema.sql
+- [x] Apply seed.sql (optional)
+- [x] Test queries locally
 
 ### Phase 2: API Development
-- [ ] Create GET /api/tasks endpoint
-- [ ] Create POST /api/tasks endpoint
-- [ ] Create PATCH /api/tasks/:id endpoint
-- [ ] Create DELETE /api/tasks/:id endpoint
-- [ ] Test all endpoints
+- [x] Create GET /api/tasks endpoint
+- [x] Create POST /api/tasks endpoint
+- [x] Create PATCH /api/tasks/:id endpoint
+- [x] Create DELETE /api/tasks/:id endpoint
+- [x] Test all endpoints
 
 ### Phase 3: Frontend Update
-- [ ] Remove static export from next.config.ts
-- [ ] Update fetch to use D1 API
-- [ ] Keep view-only UI
-- [ ] Test auto-refresh
+- [x] Remove static export from next.config.ts
+- [x] Update fetch to use D1 API
+- [x] Keep view-only UI
+- [x] Test auto-refresh
 
 ### Phase 4: CLI Update
 - [ ] Update task.sh to call D1 API
