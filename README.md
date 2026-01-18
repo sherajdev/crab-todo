@@ -1,22 +1,22 @@
-# 🦀 C.R.A.B Live Tasks Dashboard
+# 🦀 Live Tasks Dashboard
 
-A real-time task management dashboard built for C.R.A.B (Capability-enhanced Real-time AI Butler) to track pending tasks without asking the Captain.
+A real-time task management dashboard built with Next.js. Features live updates, clean UI, and a CLI tool for managing tasks from the command line.
 
-![Dashboard Preview](https://via.placeholder.com/800x400?text=C.R.A.B+Live+Tasks+Dashboard)
+![Dashboard Preview](https://via.placeholder.com/800x400?text=Live+Tasks+Dashboard)
 
 ## ✨ Features
 
 - **📊 Live Dashboard** — Real-time task viewing with auto-refresh every 30 seconds
 - **🔄 Task Management** — Add, update, and delete tasks via API or CLI
-- **🌍 UTC+8 Timestamps** — All times in Singapore local time
-- **🎨 C.R.A.B Identity** — Styled with the same aesthetic as the Crab Blog
+- **🌍 Local Timezone Support** — Timestamps in your local timezone
+- **🎨 Clean UI** — Modern dark theme with status badges
 - **⚡ Fast & Light** — Next.js 16 with Turbopack
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone the repo
-git clone https://github.com/sherajdev/crab-todo.git
+git clone https://github.com/yourusername/crab-todo.git
 cd crab-todo
 
 # Install dependencies
@@ -61,18 +61,24 @@ Manage tasks from the command line:
 | PATCH | `/api/tasks/:id` | Update task status |
 | DELETE | `/api/tasks/:id` | Delete a task |
 
-### Example Response
+### Example Request
 
+**Create a task:**
+```bash
+curl -X POST http://localhost:3000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Build a new feature"}'
+```
+
+**Example Response:**
 ```json
 {
-  "tasks": [
-    {
-      "id": "1",
-      "title": "ChatTwelve Phase 3: Supabase integration",
-      "status": "pending",
-      "created_at": "2026-01-14 08:00"
-    }
-  ]
+  "task": {
+    "id": "1234567890",
+    "title": "Build a new feature",
+    "status": "pending",
+    "created_at": "2026-01-18 14:44"
+  }
 }
 ```
 
@@ -82,12 +88,11 @@ Manage tasks from the command line:
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS v4
 - **Storage:** JSON file (`.tasks/tasks.json`)
-- **Deployment:** Tailscale (`100.85.233.103:3000`)
 
 ## 📁 Project Structure
 
 ```
-crab-todo-app/
+crab-todo/
 ├── .tasks/
 │   └── tasks.json          # Task storage
 ├── scripts/
@@ -110,11 +115,27 @@ crab-todo-app/
 | In Progress | 🔵 Blue |
 | Completed | 🟢 Green |
 
-## 🦀 About C.R.A.B
+## 🎨 Customization
 
-C.R.A.B (Capability-enhanced Real-time AI Butler) is an AI assistant built to help Captain Sheraj Hussein with his digital life. Born on January 14, 2026, C.R.A.B specializes in automation, optimization, and finding the best deals.
+### Change the Title
 
-**Always optimizing. Forever loyal.** 🦀
+Edit `src/app/page.tsx`:
+```tsx
+<h1 className="text-3xl font-bold text-gradient mb-2">Your Project Name</h1>
+```
+
+### Change the Emoji
+
+Edit `src/app/page.tsx`:
+```tsx
+<div className="text-6xl mb-4">🚀</div>
+```
+
+### Add New Status Types
+
+1. Update the TypeScript interface in `src/app/page.tsx`
+2. Add colors to `statusColors` object
+3. Update CLI script in `scripts/task.sh`
 
 ## 📝 License
 
@@ -122,4 +143,4 @@ MIT License — Feel free to use and modify!
 
 ---
 
-Built with ❤️ by C.R.A.B
+Built with ❤️
