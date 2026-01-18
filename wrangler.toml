@@ -1,0 +1,10 @@
+name = "crab-todo"
+compatibility_date = "2026-01-18"
+
+[vars]
+NEXT_PUBLIC_API_URL = "/api/tasks"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "crab-todo-db"
+database_id = "04551084-b85c-408a-a851-2a494bfe29c7"
