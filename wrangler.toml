@@ -1,5 +1,6 @@
 name = "crab-todo"
 compatibility_date = "2026-01-18"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 NEXT_PUBLIC_API_URL = "/api/tasks"

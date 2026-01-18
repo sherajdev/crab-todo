@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getRequestContext } from '@cloudflare/next-on-pages';
+
+export const runtime = 'edge';
 
 // PATCH /api/tasks/:id - Update task status or title
-export async function PATCH(request: NextRequest, context: any) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = await context.params;
+    const { env } = getRequestContext();
+    const { id } = await params;
     const { status, title } = await request.json();
 
     if (!id) {
@@ -14,7 +21,7 @@ export async function PATCH(request: NextRequest, context: any) {
     }
 
     // Check if task exists
-    const existing = await context.env.DB.prepare(
+    const existing = await env.DB.prepare(
       "SELECT * FROM tasks WHERE id = ?"
     ).bind(id).first();
 
@@ -33,20 +40,20 @@ export async function PATCH(request: NextRequest, context: any) {
           { status: 400 }
         );
       }
-      await context.env.DB.prepare(
+      await env.DB.prepare(
         "UPDATE tasks SET status = ?, updated_at = datetime('now') WHERE id = ?"
       ).bind(status, id).run();
     }
 
     // Update title
     if (title && title.trim() !== '') {
-      await context.env.DB.prepare(
+      await env.DB.prepare(
         "UPDATE tasks SET title = ?, updated_at = datetime('now') WHERE id = ?"
       ).bind(title.trim(), id).run();
     }
 
     // Fetch updated task
-    const updated = await context.env.DB.prepare(
+    const updated = await env.DB.prepare(
       "SELECT * FROM tasks WHERE id = ?"
     ).bind(id).first();
 
@@ -61,9 +68,13 @@ export async function PATCH(request: NextRequest, context: any) {
 }
 
 // DELETE /api/tasks/:id - Delete task
-export async function DELETE(request: NextRequest, context: any) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = await context.params;
+    const { env } = getRequestContext();
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json(
@@ -73,7 +84,7 @@ export async function DELETE(request: NextRequest, context: any) {
     }
 
     // Check if task exists
-    const existing = await context.env.DB.prepare(
+    const existing = await env.DB.prepare(
       "SELECT * FROM tasks WHERE id = ?"
     ).bind(id).first();
 
@@ -84,7 +95,7 @@ export async function DELETE(request: NextRequest, context: any) {
       );
     }
 
-    await context.env.DB.prepare(
+    await env.DB.prepare(
       "DELETE FROM tasks WHERE id = ?"
     ).bind(id).run();
 

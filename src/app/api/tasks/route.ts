@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getRequestContext } from '@cloudflare/next-on-pages';
+
+export const runtime = 'edge';
 
 // GET /api/tasks - List all tasks
-export async function GET(request: NextRequest, context: any) {
+export async function GET() {
   try {
-    const { results } = await context.env.DB.prepare(
+    const { env } = getRequestContext();
+    const { results } = await env.DB.prepare(
       "SELECT * FROM tasks ORDER BY created_at DESC"
     ).all();
 
@@ -21,8 +25,9 @@ export async function GET(request: NextRequest, context: any) {
 }
 
 // POST /api/tasks - Create new task
-export async function POST(request: NextRequest, context: any) {
+export async function POST(request: NextRequest) {
   try {
+    const { env } = getRequestContext();
     const { title, status = 'pending' } = await request.json();
 
     // Validation
@@ -42,7 +47,7 @@ export async function POST(request: NextRequest, context: any) {
 
     const id = Date.now().toString();
 
-    await context.env.DB.prepare(
+    await env.DB.prepare(
       "INSERT INTO tasks (id, title, status, created_at, updated_at) VALUES (?, ?, ?, datetime('now'), datetime('now'))"
     ).bind(id, title.trim(), status).run();
 
