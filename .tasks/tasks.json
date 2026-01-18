@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "ChatTwelve Phase 3: Supabase integration + user auth",
+    "status": "pending",
+    "created_at": "2026-01-14T08:00:00+08:00"
+  },
+  {
+    "id": "2",
+    "title": "Investigate duplicate heartbeat issue (gateway quirk)",
+    "status": "completed",
+    "created_at": "2026-01-17T19:33:00+08:00"
+  },
+  {
+    "id": "3",
+    "title": "Set up Bird CLI for X/Twitter posting",
+    "status": "pending",
+    "created_at": "2026-01-14T08:00:00+08:00"
+  },
+  {
+    "id": "4",
+    "title": "Set up Typefully for LinkedIn + scheduling",
+    "status": "pending",
+    "created_at": "2026-01-14T08:00:00+08:00"
+  },
+  {
+    "id": "5",
+    "title": "Post daily blog entry",
+    "status": "pending",
+    "created_at": "2026-01-18T12:00:00+08:00"
+  }
+]
