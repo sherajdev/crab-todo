@@ -1,18 +1,57 @@
-# 🦀 C.R.A.B Live Tasks Dashboard
+# C.R.A.B Live Tasks Dashboard
 
-A view-only, real-time task management dashboard built with Next.js. Features live updates, C.R.A.B blog styling, and a CLI tool for managing tasks from the command line.
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-deployed-F38020?logo=cloudflare)](https://pages.cloudflare.com/)
+[![Cloudflare D1](https://img.shields.io/badge/Cloudflare_D1-database-F38020?logo=cloudflare)](https://developers.cloudflare.com/d1/)
 
-![Dashboard Preview](https://via.placeholder.com/800x400?text=C.R.A.B+Live+Tasks+Dashboard)
+A view-only, real-time task management dashboard. Watch tasks update live as they're managed by the Clawdbot AI Agent.
 
-## ✨ Features
+**Live Site:** [https://crab-todo.sheraj.org](https://crab-todo.sheraj.org)
 
-- **📊 Live Dashboard** — Real-time view-only dashboard with auto-refresh every 30 seconds
-- **🔄 CLI Management** — Manage your tasks via the included CLI tool
-- **🌍 Local Timezone Support** — Timestamps in your local timezone
-- **🎨 C.R.A.B Theme** — Modern dark theme (`#0a0a0a`) with teal accents
-- **⚡ Fast & Light** — Next.js 16 with Turbopack
+---
 
-## 🚀 Quick Start
+## Clawdbot AI Agent
+
+This dashboard is designed to work with **[Clawdbot](https://clawd.bot)** — an AI agent that manages tasks autonomously. The dashboard provides a real-time view of tasks as they are created, updated, and completed by the agent.
+
+- **View-only interface** — No manual task editing; all changes come from the AI agent
+- **Real-time updates** — Dashboard auto-refreshes every 30 seconds
+- **Live monitoring** — Watch the AI agent's progress in real-time
+
+---
+
+## Features
+
+- **Live Dashboard** — Real-time view-only dashboard with auto-refresh
+- **Task Statistics** — Visual breakdown of pending, in-progress, and completed tasks
+- **C.R.A.B Theme** — Modern dark theme (`#0a0a0a`) with teal accents
+- **Edge-powered** — Fast API responses via Cloudflare Workers
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Framework** | Next.js 15.5.2 (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS v4 + shadcn/ui |
+| **Database** | Cloudflare D1 (SQLite) |
+| **Hosting** | Cloudflare Pages |
+| **Runtime** | Edge Runtime |
+
+## API Endpoints
+
+The API powers the dashboard and is called by the Clawdbot agent:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/tasks` | List all tasks |
+| POST | `/api/tasks` | Create a new task |
+| PATCH | `/api/tasks/:id` | Update task status |
+| DELETE | `/api/tasks/:id` | Delete a task |
+
+## Local Development
 
 ```bash
 # Clone the repo
@@ -28,73 +67,30 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the dashboard.
 
-## 📋 CLI Usage
-
-Since the dashboard is view-only, you manage tasks using the command line:
-
-```bash
-# Add a new task
-./scripts/task.sh add "Deploy new feature"
-
-# List all tasks
-./scripts/task.sh list
-
-# List pending tasks only
-./scripts/task.sh pending
-
-# Mark task as in-progress
-./scripts/task.sh progress <task_id>
-
-# Mark task as completed
-./scripts/task.sh done <task_id>
-
-# Delete a task
-./scripts/task.sh delete <task_id>
-```
-
-## 🔌 API Endpoints
-
-The API is available for both reading and writing tasks:
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/tasks` | List all tasks |
-| POST | `/api/tasks` | Create a new task |
-| PATCH | `/api/tasks/:id` | Update task status |
-| DELETE | `/api/tasks/:id` | Delete a task |
-
-## 🛠 Tech Stack
-
-- **Framework:** Next.js 16.1.3 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4 + shadcn/ui
-- **Storage:** JSON file (`.tasks/tasks.json`)
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 crab-todo/
-├── .tasks/
-├── components.json     # shadcn config
 ├── src/
 │   ├── app/
-│   │   ├── api/tasks/  # API routes
-│   │   ├── page.tsx    # Dashboard layout
-│   │   └── globals.css # Global styles (C.R.A.B theme)
-│   ├── components/     # UI components
+│   │   ├── api/tasks/       # Edge API routes (D1)
+│   │   ├── page.tsx         # Dashboard page
+│   │   └── globals.css      # C.R.A.B theme
+│   ├── components/          # UI components
 │   │   ├── task-dashboard.tsx
 │   │   ├── stats-cards.tsx
-│   │   ├── task-list.tsx
-│   │   └── ...
+│   │   └── task-list.tsx
 │   └── lib/
-│       └── tasks.ts    # Task management logic
-└── ...
+│       └── tasks.ts         # Task type definitions
+├── schema.sql               # D1 database schema
+├── wrangler.toml            # Cloudflare config
+└── env.d.ts                 # Cloudflare type definitions
 ```
 
-## 📝 License
+## License
 
 MIT License — Feel free to use and modify!
 
 ---
 
-Built with ❤️ by C.R.A.B
+Built with C.R.A.B — *Always optimizing. Forever loyal.*
