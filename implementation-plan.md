@@ -4,7 +4,7 @@
 
 **Date:** 2026-01-18
 **Author:** C.R.A.B
-**Status:** Deployed (Phase 4 pending)
+**Status:** Complete
 
 ---
 
@@ -508,9 +508,10 @@ npx wrangler pages domain crab-todo.sheraj.org --project=crab-todo
 - [x] Test auto-refresh
 
 ### Phase 4: CLI Update
-- [ ] Update task.sh to call D1 API
-- [ ] Change API_URL to production URL
-- [ ] Test all commands
+- [x] Update task.sh to call D1 API
+- [x] Change API_URL to production URL
+- [x] Add status command for API health check
+- [x] Test all commands
 
 ### Phase 5: Deployment
 - [x] Deploy to Cloudflare Pages
@@ -582,8 +583,10 @@ crab-todo/
 4. ~~Build API endpoints~~ ✅
 5. ~~Update frontend~~ ✅
 6. ~~Deploy and test~~ ✅
-7. Update CLI tool (task.sh) to use production API URL
+7. ~~Update CLI tool (task.sh) to use production API URL~~ ✅
 8. Configure custom domain (optional)
+
+**All phases complete!** 🦀
 
 ---
 
