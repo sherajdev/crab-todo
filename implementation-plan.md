@@ -4,7 +4,7 @@
 
 **Date:** 2026-01-18
 **Author:** C.R.A.B
-**Status:** Planning
+**Status:** Deployed (Phase 4 pending)
 
 ---
 
@@ -513,10 +513,11 @@ npx wrangler pages domain crab-todo.sheraj.org --project=crab-todo
 - [ ] Test all commands
 
 ### Phase 5: Deployment
-- [ ] Deploy to Cloudflare Pages
-- [ ] Configure custom domain
-- [ ] Test end-to-end flow
-- [ ] Monitor for issues
+- [x] Deploy to Cloudflare Pages
+- [x] Configure @cloudflare/next-on-pages adapter
+- [x] Configure D1 database binding
+- [x] Test end-to-end flow
+- [ ] Configure custom domain (optional)
 
 ---
 
@@ -575,12 +576,14 @@ crab-todo/
 
 ## 12. Next Steps
 
-1. Captain reviews this plan
-2. Approve implementation
-3. Start with D1 database setup
-4. Build API endpoints
-5. Update frontend
-6. Deploy and test
+1. ~~Captain reviews this plan~~ ✅
+2. ~~Approve implementation~~ ✅
+3. ~~Start with D1 database setup~~ ✅
+4. ~~Build API endpoints~~ ✅
+5. ~~Update frontend~~ ✅
+6. ~~Deploy and test~~ ✅
+7. Update CLI tool (task.sh) to use production API URL
+8. Configure custom domain (optional)
 
 ---
 
